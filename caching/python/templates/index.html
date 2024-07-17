@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ theme.title }}</title>
+    <style>
+        h1 {
+            color: {{ theme.styles.h1_color }};
+        }
+        h2 {
+            color: {{ theme.styles.h2_color }};
+        }
+        p {
+            color: {{ theme.styles.p_color }};
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#organisation_id').change(function() {
+                var selectedOrgId = $(this).val();
+                $.ajax({
+                    url: '/get-theme/' + selectedOrgId,
+                    method: 'GET',
+                    success: function(response) {
+                        let new_theme = response;
+                        updateTheme(new_theme);
+                    },
+                    error: function() {
+                        console.log('Error in fetching organisation details');
+                    }
+                });
+            });
+
+            function updateTheme(theme) {
+                $('h1').css('color', theme.styles.h1_color);
+                $('h2').css('color', theme.styles.h2_color);
+                $('p').css('color', theme.styles.p_color);
+                $('header h1').text(theme.header);
+                $('main h2').text('Welcome to the website!');
+                $('main p').text(theme.content);
+            }
+        });
+    </script>
+</head>
+<body>
+    <label for="organisation_id">Users:</label>
+        <select id="organisation_id" name="organisation_id">
+            <option value="">Select a User</option>
+            {% for user in users %}
+            <option value="{{ user.organisation_id }}">{{ user.name }}</option>
+            {% endfor %}
+        </select>
+    <header>
+        <h1>{{ theme.header }}</h1>
+    </header>
+
+    <main>
+        <h2>Welcome to the website!</h2>
+        <p>{{ theme.content }}</p>
+    </main>
+</body>
+</html>

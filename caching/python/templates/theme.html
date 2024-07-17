@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Theme Selector</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#id').change(function() {
+                var selectedOrgId = $(this).val();
+                $.ajax({
+                    url: '/get-theme/' + selectedOrgId,
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.organisation_id != selectedOrgId) {
+                            $('#title').val('');
+                            $('#header').val('');
+                            $('#content').val('');
+                            $('#h1_color').val('');
+                            $('#h2_color').val('');
+                            $('#p_color').val('');
+                        } else {
+                            $('#title').val(response.title);
+                            $('#header').val(response.header);
+                            $('#content').val(response.content);
+                            $('#h1_color').val(response.styles.h1_color);
+                            $('#h2_color').val(response.styles.h2_color);
+                            $('#p_color').val(response.styles.p_color);
+                        }
+                    },
+                    error: function() {
+                        console.log('Error in fetching organisation details');
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Please enter theme details of organisation</h1>
+    <form action="/set-theme" method="POST">
+
+        <label for="id">Organisation:</label>
+        <select id="id" name="id">
+            <option value="">Select an organisation</option>
+            {% for org in organisation_list %}
+            <option value="{{ org.id }}">{{ org.name }}</option>
+            {% endfor %}
+        </select>
+        <br/>
+
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title">
+        <br/>
+
+        <label for="header">Header:</label>
+        <input type="text" id="header" name="header">
+        <br/>
+
+        <label for="content">Content:</label>
+        <input type="text" id="content" name="content">
+        <br/>
+
+        <label for="h1_color">H1 Color:</label>
+        <input type="text" id="h1_color" name="h1_color">
+        <br/>
+        
+        <label for="h2_color">H2 Color:</label>
+        <input type="text" id="h2_color" name="h2_color">
+        <br/>
+        
+        <label for="p_color">P Color:</label>
+        <input type="text" id="p_color" name="p_color">
+        <br/>
+
+        <button type="submit">Apply Theme</button>
+    </form>
+</body>
+</html>
